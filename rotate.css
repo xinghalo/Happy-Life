@@ -1,0 +1,26 @@
+*{
+	padding:0;
+	margin:0
+}
+body{
+	text-align: center;
+	background-color: #1664ad;
+}
+#backgournd-circle {
+	position: absolute;
+    top: 0px;
+    left: 0px;
+}
+#needle {
+	position: absolute;
+	top: 293px;
+    left: 292px;
+    z-index: 9999;
+    cursor: pointer;
+}
+#tagit {
+	position: absolute;
+	left: 1000px;
+	width: 300px;
+	top: 200px;
+}

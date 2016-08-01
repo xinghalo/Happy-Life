@@ -1,180 +1,125 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>jQueryRotate圆盘抽奖插件</title>
-<style type="text/css">
-*{padding:0;margin:0}
-body{
-	text-align: center;
-	background-color: #1664ad;
-}
-.ly-plate{
-	position:relative;
-	width:509px;
-	height:509px;
-	margin: 50px auto;
-}
-.rotate-bg{
-	width: 509px;
-	height: 509px;
-	background: url(ly-plate.png);
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin-top: 0%;
-}
-.ly-plate div.lottery-star{
-	width:214px;
-	height:214px;
-	position:absolute;
-	top:150px;
-	left:147px;
-	/*text-indent:-999em;
-	overflow:hidden;
-	background:url(rotate-static.png);
-	-webkit-transform:rotate(0deg);*/
-	outline:none
-}
-.ly-plate div.lottery-star #lotteryBtn{
-	cursor: pointer;
-	position: absolute;
-	top:0;
-	left:0;
-	*left:-107px
-}
-</style>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>抽奖选礼物</title>
+	<link rel="stylesheet" type="text/css" href="css/tagit-stylish-yellow.css">
+	<link rel="stylesheet" type="text/css" href="rotate.css">
 </head>
 <body>
+	<ul id="tagit"></ul>
+	<img src="rotate-static.png" id="needle">
+	<canvas id="backgournd-circle" width="1000" height="1000"></canvas>
 
-<canvas id="backgournd-circle" width="1000" height="1000"></canvas>
-<script type=text/javascript>
-	var ctx = document.getElementById('backgournd-circle').getContext('2d');
-	ctx.sector(100,100,50,0,Math.PI/180*230).fill();
-	
-	//扇形
-	CanvasRenderingContext2D.prototype.sector = function (x, y, radius, sDeg, eDeg) {
-		// 初始保存
-		this.save();
-		// 位移到目标点
-		this.translate(x, y);
-		this.beginPath();
-		// 画出圆弧
-		this.arc(0,0,radius,sDeg, eDeg);
-		// 再次保存以备旋转
-		this.save();
-		// 旋转至起始角度
-		this.rotate(eDeg);
-		// 移动到终点，准备连接终点与圆心
-		this.moveTo(radius,0);
-		// 连接到圆心
-		this.lineTo(0,0);
-		// 还原
-		this.restore();
-		// 旋转至起点角度
-		this.rotate(sDeg);
-		// 从圆心连接到起点
-		this.lineTo(radius,0);
-		this.closePath();
-		// 还原到最初保存的状态
-		this.restore();
-		return this;
-	}
 
-	/*context.beginPath();
-	context.fillStyle="#FFFFFF";
-	context.arc(400,400,300,0,Math.PI*2/5,true); //Math.PI*2是JS计算方法，是圆
-	context.closePath();
-	context.fill();
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.1.8.20.min.js"></script>
+	<script type="text/javascript" src="js/jQueryRotate.2.2.js"></script>
+	<script type="text/javascript" src="js/jquery.easing.min.js"></script>
+	<script type="text/javascript" src="js/tagit.js"></script>
 
-	context.beginPath();
-	context.fillStyle="black";
-	context.arc(400,400,250,Math.PI*2/5,Math.PI*2*2/5,true); //Math.PI*2是JS计算方法，是圆
-	context.closePath();
-	context.fill();*/
-	var deg = Math.PI/180;
-	ctx.sector(100,100,80,30*deg,111*deg).fill();
-	ctx.fillStyle="#f00";
-	ctx.sector(100,100,80,111*deg,190*deg).fill();
-	ctx.fillStyle="#0f0";
-	ctx.sector(100,100,80,190*deg,233*deg).fill();
-	ctx.fillStyle="#00f";
-	ctx.sector(100,100,80,233*deg,280*deg).fill();
-	ctx.fillStyle="#789";
-	ctx.sector(100,100,80,280*deg,345*deg).fill();
-	ctx.fillStyle="#abcdef";
-	ctx.sector(100,100,80,345*deg,30*deg).fill();
-</script>
-
-<div class="ly-plate">
-	<div class="rotate-bg"></div>
-	<div class="lottery-star"><img src="rotate-static.png" id="lotteryBtn"></div>
-</div>
-
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/jQueryRotate.2.2.js"></script>
-<script type="text/javascript" src="js/jquery.easing.min.js"></script>
-
-<script type="text/javascript">
-$(function(){
-	var timeOut = function(){  //超时函数
-		$("#lotteryBtn").rotate({
-			angle:0, 
-			duration: 10000, 
-			animateTo: 2160, //这里是设置请求超时后返回的角度，所以应该还是回到最原始的位置，2160是因为我要让它转6圈，就是360*6得来的
-			callback:function(){
-				alert('网络超时')
-			}
-		}); 
-	}; 
-	var rotateFunc = function(awards,angle,text){  //awards:奖项，angle:奖项对应的角度
-		$('#lotteryBtn').stopRotate();
-		$("#lotteryBtn").rotate({
-			angle:0, 
-			duration: 5000, 
-			animateTo: angle+1440, //angle是图片上各奖项对应的角度，1440是我要让指针旋转4圈。所以最后的结束的角度就是这样子^^
-			callback:function(){
-				alert(text)
-			}
-		}); 
-	};
-	
-	$("#lotteryBtn").rotate({ 
-	   bind: 
-		 { 
-			click: function(){
-				var time = [0,1];
-					time = time[Math.floor(Math.random()*time.length)];
+	<script type="text/javascript">
+		$(function(){
+			
+			$('#tagit').tagit();
+			/* 随机生成颜色 */
+			var getRandomColor = function(){
+				var _rcolor = "";
+				for(var i=0;i<6;i++){
+					var random = Math.floor(Math.random()*13);
+					if(random<10){
+						_rcolor += random;
+					}else if(random === 10){
+						_rcolor += "a";
+					}else if(random === 11){
+						_rcolor += "b";
+					}else if(random === 12){
+						_rcolor += "c";
+					}else if(random === 13){
+						_rcolor += "d";
+					}else if(random === 14){
+						_rcolor += "e";
+					}else{
+						_rcolor += "f";
+					}
+				}
+				return "#"+_rcolor;
+			};
+			/* 根据输入的礼物个数，分配后面的面板 */
+			var init_background = function (arr) {
+				var number = arr.length;
+				var pie = (Math.PI*2)/number;
+				var last = 0;
 				
-				if(time==0){
-					timeOut(); //网络超时
+				for(var i=0; i<number; i++){
+		            ctx.fillStyle=getRandomColor();
+			        ctx.sector(400,400,270,last,last+pie,arr[i].label).fill();
+			        last += pie;
 				}
-				if(time==1){
-					var data = [1,2,3,0]; //返回的数组
-						data = data[Math.floor(Math.random()*data.length)];
-					if(data==1){
-						rotateFunc(1,157,'恭喜您抽中的一等奖')
+			};
+			/* 绘制扇形 */
+		    CanvasRenderingContext2D.prototype.sector = function (x, y, radius, sDeg, eDeg,text) {
+				// 初始保存
+				this.save();
+				// 位移到目标点
+				this.translate(x, y);
+				this.beginPath();
+				// 画出圆弧
+				this.arc(0,0,radius,sDeg, eDeg);
+				// 再次保存以备旋转
+				this.save();
+				// 旋转至起始角度
+				this.rotate(eDeg);
+				// 移动到终点，准备连接终点与圆心
+				this.moveTo(radius,0);
+				// 连接到圆心
+				this.lineTo(0,0);
+				// 还原
+				this.restore();
+				// 旋转至起点角度
+				this.rotate(sDeg);
+				// 从圆心连接到起点
+				this.lineTo(radius,0);
+				this.closePath();
+				// 还原到最初保存的状态
+				this.restore();
+				return this;
+			};
+
+			var ctx = document.getElementById('backgournd-circle').getContext('2d');
+			ctx.clearRect(0,0,1000,1000);
+			ctx.fillStyle="#f68d10";
+			ctx.sector(400,400,300,0,Math.PI*2).fill();
+			ctx.fillStyle="#f1b246";
+			ctx.sector(400,400,280,0,Math.PI*2).fill();
+
+			$("#tagit input").blur(function(){
+				init_background($('#tagit').tagit('tags'));
+			});
+
+			var rotateFunc = function(data,result){
+				$('#needle').stopRotate();
+				$("#needle").rotate({
+					angle:0, 
+					duration: 5000, 
+					animateTo: 1440+360*result/data.length+Math.random()*360/data.length,
+					callback:function(){
+						alert(data[result].value)
 					}
-					if(data==2){
-						rotateFunc(2,247,'恭喜您抽中的二等奖')
+				}); 
+			};
+			
+			$("#needle").rotate({
+				bind:{ 
+					click: function(){
+						var data = $('#tagit').tagit('tags');
+						var result = Math.floor(Math.random()*data.length);
+						rotateFunc(data,result);
 					}
-					if(data==3){
-						rotateFunc(3,22,'恭喜您抽中的三等奖')
-					}
-					if(data==0){
-						var angle = [67,112,202,292,337];
-							angle = angle[Math.floor(Math.random()*angle.length)]
-						rotateFunc(0,angle,'很遗憾，这次您未抽中奖')
-					}
-				}
-			}
-		 } 
-	   
-	});
-	
-})
-</script>	
-	
+				} 
+			});
+		})
+	</script>	
 </body>
 </html>
